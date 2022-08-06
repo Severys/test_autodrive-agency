@@ -1,17 +1,37 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div 
+  v-if="!show"
+  id="app">
+    <buttonsVue 
+    @choose="shownow"
+    />
   </div>
+  <formVue v-else/>
+
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import buttonsVue from './components/buttons.vue'
+import formVue from './components/form.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    buttonsVue,
+    formVue
+  },
+  data() {
+    return {
+      show: false,
+      currentcity: ''
+    }
+  },
+  methods: {
+    shownow (city) {
+      console.log(city)
+      this.currentcity = city
+      this.show = true
+    }
   }
 }
 </script>
@@ -21,8 +41,5 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
