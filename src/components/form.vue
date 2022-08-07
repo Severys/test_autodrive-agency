@@ -1,43 +1,56 @@
 <template>
   <div class="fixed flex w-full h-full justify-center items-center bg-slate-900 opacity-70 z-30">
     <form 
-      class="flex flex-col items-center bg-white p-6 gap-4 rounded-md font-bold text-lg z-20 w-auto"
+      class="flex flex-col items-center bg-white p-6 gap-4 mx-9 rounded-md font-bold text-lg z-20 w-auto"
       action=""
     >
       <legend class="text:black">Заказать звонок</legend>
-      <div class="flex gap-5 flex-wrap justify-center md:justify-start relative pb-14" >
+      <div class="grid justify-items-center	gap-5 md:grid-cols-3 lg:grid-cols-4">
         <div 
-          class="flex flex-col "
+          class="flex flex-col w-full "
           v-for="(item,index) in items" :key="index"
-          :class="item.label==='Город' ? item.class :'' "
-          >
-            <span>
-              {{item.label}}
-              <span>*</span>
-            </span>
-            <input 
-              type="text" 
-              :placeholder="item.placeholder" 
-              class="border p-3 rounded-md text-base"
-            >
-        </div>
-        <!-- <li class="flex flex-col w-44">
+          :class="item.label==='Город' ? 'md:col-span-2 lg:col-span-1' : ''"
+        >
+          <span>
+            {{item.label}}
+            <span>*</span>
+          </span>
           <input 
-            type="text"
-            v-show="false"
+            v-if="!item.select"
+            type="text" 
+            :placeholder="item.placeholder" 
+            class="border p-3 rounded-md"
           >
-          <span>Город<span>*</span></span>
-          <label 
-            class="border p-3 rounded-md text-base" 
-            for="msk">
-            {{city.first}}
-          </label>
-        </li> -->
+          <div 
+            v-else
+            class="border p-3 rounded-md relative"
+            @click="test(true)"
+          >
+            <input 
+              class="focus:outline-none cursor-pointer"
+              readonly
+              :value="item.placeholder"
+              @blur="test(false)"
+            />
+            <div
+              v-if="areCityVisible"
+              class="absolute -bottom-20 -left-0 p-3 border bg-white cursor-pointer w-full rounded-md ease-out"
+            >
+              <p
+                v-for="city in cities" 
+                :key="city"
+              >
+                {{city}}
+              </p>
+            </div>
+          </div>
+          
+        </div>
         <button 
-        class="border p-2 bg-green-600 rounded-md w-40 text-base text-white h-10 lg:absolute lg:bottom-1 lg:right-1"
-      >
+        class="w-full bg-green-600 rounded-md text-xl text-white h-12 md:self-end	lg:col-start-4"
+        >
         Отправить
-      </button>
+        </button>
       </div>
       
     </form>
@@ -55,15 +68,15 @@ export default {
     return {
       items: [
         {
-          label:'Имя',
-          placeholder: 'Иван Иванов',
-          value: '',
-        },
-        {
           label:'Телефон',
           placeholder: 'Иван Иванов',
           value: '',
           type:'tel'
+        },
+        {
+          label:'Имя',
+          placeholder: 'Иван Иванов',
+          value: '',
         },
         {
           label:'Email',
@@ -75,14 +88,18 @@ export default {
           label:'Город',
           placeholder: 'Москва',
           value: '',
-          type:'text',
-          class: ''
-        }               
+          select: true
+        }
       ],
-      city: {
-        first: 'Москва'
-
-      }
+      cities: [
+        'Москва', 'Санкт-Петерсбург'
+      ],
+      areCityVisible: false
+    }
+  },
+  methods: {
+    test(val) {
+      this.areCityVisible = val
     }
   }
 }
