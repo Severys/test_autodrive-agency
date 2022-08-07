@@ -43,7 +43,10 @@
               @blur="showCities(false)"
               :placeholder="item.placeholder"
             />
-            <img src="../assets/input_icon.svg" alt="Стрелка" class="absolute top-6 right-4 w-3 ">
+            <img 
+              src="../assets/input_icon.svg" alt="Стрелка" class="absolute top-6 right-4 w-3 transition-transform	"
+              :class="areCityVisible === true ? '-rotate-180' : ''"
+            >
             <div
               v-show="areCityVisible"
               class="absolute -bottom-30 -left-0 p-3 border bg-white cursor-pointer w-full rounded-md duration-300 z-3"
