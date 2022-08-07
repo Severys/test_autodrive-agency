@@ -1,16 +1,21 @@
 <template>
   <div 
-  v-if="!show"
-  id="app">
-    <buttonsVue 
-    @choose="shownow"
-    />
+    v-if="!show"
+    id="app"
+  >
+      <buttonsVue 
+        @choose="shownow"
+      />
   </div>
-  <formVue v-else/>
+  <formVue 
+    v-else
+    @close="noshow"  
+  />
 
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
 import buttonsVue from './components/buttons.vue'
 import formVue from './components/form.vue'
 
@@ -23,16 +28,19 @@ export default {
   data() {
     return {
       show: false,
-      currentcity: ''
     }
   },
   methods: {
+    ...mapMutations(['changeCurentCity']),
     shownow (city) {
-      console.log(city)
-      this.currentcity = city
+      this.changeCurentCity(city)
       this.show = true
+    },
+    noshow () {
+      this.show = false
     }
-  }
+  },
+  
 }
 </script>
 
