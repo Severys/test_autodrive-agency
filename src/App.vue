@@ -1,17 +1,13 @@
 <template>
-  <div 
-    v-if="!show"
-    id="app"
-  >
+  <div id="app">
+      <formVue 
+        v-if="show"
+        @close="noshow"  
+      />
       <buttonsVue 
         @choose="shownow"
       />
   </div>
-  <formVue 
-    v-else
-    @close="noshow"  
-  />
-
 </template>
 
 <script>
@@ -23,7 +19,7 @@ export default {
   name: 'App',
   components: {
     buttonsVue,
-    formVue
+    formVue,
   },
   data() {
     return {
@@ -31,16 +27,16 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['changeCurentCity']),
+    ...mapMutations(['changeCurentCity','setAnswer']),
     shownow (city) {
       this.changeCurentCity(city)
       this.show = true
     },
     noshow () {
       this.show = false
+      this.setAnswer('')
     }
   },
-  
 }
 </script>
 

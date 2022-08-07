@@ -1,7 +1,12 @@
 <template>
   <div 
-    class="fixed flex w-full h-full justify-center items-center bg-slate-900 opacity-70 z-30"
+    class="fixed flex flex-col gap-3 w-full h-full justify-center items-center bg-slate-900 opacity-70 z-30"
   >
+    <answerVue
+      class="absolute h-80 max-w-lg md:h-auto md:top-1/4 z-40 bg-white w-1/2 border-4 rounded-lg p-5 shadow-2xl border-black"
+      v-if="answer"
+      :answer="answer"
+    />
     <form 
       class="flex flex-col items-center bg-white p-6 gap-4 mx-9 rounded-md font-bold text-lg z-20 w-auto"
       action=""
@@ -34,32 +39,31 @@
             <input 
               class="focus:outline-none cursor-pointer"
               readonly
-              v-model="currentCity"
+              v-model="currentCity.name"
               @blur="showCities(false)"
+              :placeholder="item.placeholder"
             />
             <div
               v-show="areCityVisible"
-              class="absolute -bottom-20 -left-0 p-3 border bg-white cursor-pointer w-full rounded-md duration-300 "
+              class="absolute -bottom-30 -left-0 p-3 border bg-white cursor-pointer w-full rounded-md duration-300 z-3"
             >
               <p
                 v-for="city in cities" 
-                :key="city"
-                @mousedown="changeCurentCity(city)"
+                :key="city.id"
+                @mousedown="choiseCity(city)"
               >
-                {{city}}
+                {{city.name}}
               </p>
             </div>
           </div>
-          
         </div>
         <button 
           class="w-full bg-green-600 rounded-md text-xl text-white h-12 md:self-end	lg:col-start-4"
           @click.stop.prevent="send"
         >
-        Отправить
+          Отправить
         </button>
       </div>
-      
     </form>
     <div 
       class="absolute w-full h-full z-10"
@@ -70,11 +74,13 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
+import answerVue from './answer.vue'
 
 export default {
   name: 'formVue',
-  props: {
+  components:{
+    answerVue
   },
   data() {
     return {
@@ -98,17 +104,19 @@ export default {
         },
         {
           label:'Город',
-          select: true
+          select: true,
+          placeholder: 'Выберите город'
         }
-      ],
-      cities: [
-        'Москва', 'Санкт-Петерсбург'
       ],
       areCityVisible: false
     }
   },
+  computed: {
+    ...mapState(['currentCity','cities','answer'])
+  },
   methods: {
     ...mapMutations(['changeCurentCity']),
+    ...mapActions(['sendRequest']),
     showCities(val) {
       this.areCityVisible = val
     },
@@ -135,16 +143,28 @@ export default {
         resolve(this.validate())
       })
       res.then(result=>{
-        console.log(!result)
+        if (!result === true)  {
+          let requestData = {
+            name: this.items[1].value,
+            phone: this.items[0].value.replace(/[^+0-9]/g, ''),
+            email: this.items[2].value,
+            city_id: this.currentCity.id
+          } 
+          this.sendRequest(requestData).then(answer=>{
+            if (answer === true) this.clearForm()
+          })
+        }
       })
+    },
+    clearForm() {
+      this.items.forEach(element => element.value = '')
+      this.changeCurentCity({})
+      
+    },
+    choiseCity(val) {
+      this.changeCurentCity(val.id)
+      this.showCities(false)
     }
-  },
-  computed: {
-    ...mapState(['currentCity'])
   }
 }
 </script>
-
-<style scoped>
-
-</style>
